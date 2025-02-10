@@ -1,10 +1,11 @@
 import boto3
+from decimal import Decimal
+import json
 import urllib.parse
 import os
 
 print('Loading function')
 
-# AWS Clients
 dynamodb = boto3.client('dynamodb')
 s3 = boto3.client('s3')
 rekognition = boto3.client('rekognition')
@@ -16,12 +17,8 @@ REKOGNITION_COLLECTION = os.getenv('REKOGNITION_COLLECTION', 'face-rekognition-c
 def index_faces(bucket, key):
     try:
         response = rekognition.index_faces(
-            CollectionId=REKOGNITION_COLLECTION,
             Image={"S3Object": {"Bucket": bucket, "Name": key}},
-            ExternalImageId=key,  
-            DetectionAttributes=["DEFAULT"],
-            MaxFaces=1,
-            QualityFilter="AUTO"
+            CollectionId=REKOGNITION_COLLECTION
         )
         return response
     except Exception as e:
@@ -30,15 +27,11 @@ def index_faces(bucket, key):
 
 def update_index(table_name, face_id, full_name):
     try:
-        if not face_id:
-            print("Skipping DynamoDB update due to missing FaceId.")
-            return
-        
         response = dynamodb.put_item(
             TableName=table_name,
             Item={
-                'RekognitionID': {'S': face_id},
-                'full_name': {'S': full_name}
+                'RekognitionID': {'S': face_id},  # Fixed key name
+                'FullName': {'S': full_name}
             }
         )
         return response
@@ -68,10 +61,8 @@ def lambda_handler(event, context):
 
                 for face_record in face_records:
                     face_id = face_record['Face']['FaceId']
-
-                    # Get metadata safely
                     object_metadata = s3.head_object(Bucket=bucket, Key=key)
-                    person_full_name = object_metadata.get('Metadata', {}).get('fullname', 'Unknown')
+                    person_full_name = object_metadata['Metadata'].get('fullname', 'Unknown')
 
                     update_index(DYNAMODB_TABLE, face_id, person_full_name)
                     print(f"Face indexed successfully. FaceId: {face_id}, Full Name: {person_full_name}")

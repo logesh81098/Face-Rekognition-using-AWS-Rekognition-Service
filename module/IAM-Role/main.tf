@@ -145,7 +145,7 @@ resource "aws_iam_policy" "faceprint-policy" {
             "s3:GetObject",
             "s3:HeadObject"
         ],
-        "Resource": "arn:aws:s3:::peoples-source-image/*"
+        "Resource": "arn:aws:s3:::individuals-source-image/*"
     }
     ]
 }  

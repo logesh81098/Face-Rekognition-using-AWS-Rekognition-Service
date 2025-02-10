@@ -50,11 +50,24 @@ resource "aws_lambda_function" "faceprints" {
   function_name = "faceprints-lambda"
   role = var.faceprints-role
   timeout = "20"
-  handler = "faceprints.lambda_handle"
+  handler = "faceprints.lambda_handler"
   filename = "module/Lambda Function/faceprints.zip"
   runtime = "python3.8"
   tags = {
     Name = "faceprints-lambda"
   }
 }
+
+##################################################################################################################################################
+#                                                   S3 bucket to trigger lambda
+##################################################################################################################################################
+
+resource "aws_lambda_permission" "s3-trigger-lambda" {
+  function_name = aws_lambda_function.faceprints.function_name
+  statement_id = "s3-trigger-lambda"
+  principal = "s3.amazonaws.com"
+  action = "lambda:InvokeFunction"
+  source_arn = var.source-s3-bucket-arn
+}
+
 
