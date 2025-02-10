@@ -10,11 +10,11 @@ resource "aws_dynamodb_table" "faceprints-table" {
   billing_mode = "PAY_PER_REQUEST"
   attribute {
     type = "S"
-    name = "full_name"
+    name = "RekognitionID"
   }
   attribute {
     type = "S"
-    name = "RekognitionID"
+    name = "full_name"
   }
   global_secondary_index {
     name            = "full_name-index"

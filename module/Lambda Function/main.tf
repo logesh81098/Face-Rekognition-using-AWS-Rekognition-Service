@@ -29,7 +29,32 @@ resource "aws_lambda_function" "face-rekognition-collection-id" {
 }
 
 
+##################################################################################################################################################
+#                                                   Archive the lambda code
+##################################################################################################################################################
+
+data "archive_file" "faceprints-code" {
+  type = "zip"
+  source_dir = "module/Lambda Function"
+  output_path = "module/Lambda Function/faceprints.zip"
+}
 
 
+##################################################################################################################################################
+#                                                   Deploying Lambda Function
+##################################################################################################################################################
 
+#Lambda function to create faceprints and store it in DynamoDB table
+
+resource "aws_lambda_function" "faceprints" {
+  function_name = "faceprints-lambda"
+  role = var.faceprints-role
+  timeout = "20"
+  handler = "faceprints.lambda_handle"
+  filename = "module/Lambda Function/faceprints.zip"
+  runtime = "python3.8"
+  tags = {
+    Name = "faceprints-lambda"
+  }
+}
 
