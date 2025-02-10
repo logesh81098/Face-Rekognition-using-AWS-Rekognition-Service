@@ -11,3 +11,16 @@ resource "aws_s3_bucket" "source-bucket" {
     Project = "Face Recognition"
   }
 }
+
+
+##################################################################################################################################################
+#                                                   S3 object upload to trigger lambda
+##################################################################################################################################################
+
+resource "aws_s3_bucket_notification" "s3-trigger-lambda" {
+  bucket = aws_s3_bucket.source-bucket.id
+  lambda_function {
+    lambda_function_arn = var.faceprints-lambda-arn
+    events = ["s3:ObjectCreated:*"]
+  }
+}
