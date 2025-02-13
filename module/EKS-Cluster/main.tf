@@ -9,6 +9,7 @@ resource "aws_eks_cluster" "face-rekogntion-cluster" {
   role_arn = var.eks-cluster-role
   vpc_config {
     subnet_ids = [var.subnet-1, var.subnet-2]
+    security_group_ids = [var.eks-worker-node-security-group]
   }
   tags = {
     Name = "face-rekogntion-cluster"

@@ -13,3 +13,7 @@ variable "subnet-2" {
 variable "eks-worker-node-role" {
   default = {}
 }
+
+variable "eks-worker-node-security-group" {
+  default = {}
+}

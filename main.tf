@@ -28,4 +28,10 @@ module "eks-cluster" {
   eks-worker-node-role = module.iam-role.eks-worker-node
   subnet-1 = module.vpc.subnet-1
   subnet-2 = module.vpc.subnet-2
+  eks-worker-node-security-group = module.security-group.eks-worker-node-security-group
+}
+
+module "security-group" {
+  source = "./module/Security-Group"
+  vpc-id = module.vpc.vpc-id
 }
