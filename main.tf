@@ -21,3 +21,11 @@ module "dynamodb" {
 module "vpc" {
   source = "./module/VPC"
 }
+
+module "eks-cluster" {
+  source = "./module/EKS-Cluster"
+  eks-cluster-role = module.iam-role.eks-cluster-role
+  eks-worker-node-role = module.iam-role.eks-worker-node
+  subnet-1 = module.vpc.subnet-1
+  subnet-2 = module.vpc.subnet-2
+}
