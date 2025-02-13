@@ -6,6 +6,7 @@
 
 resource "aws_security_group" "eks-cluster-security-group" {
   name = "eks-cluster-security-group"
+  vpc_id = var.vpc-id
   description = "Security Group to access Face Rekognition application running on EC2 instance"
   ingress {
     from_port = 81
