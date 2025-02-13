@@ -230,6 +230,50 @@ EOF
 
 
 ##################################################################################################################################################
+#                                                       Deploying IAM Policy
+################################################################################################################################################## 
+
+#IAM policy for EKS node group to connect with Application
+
+resource "aws_iam_policy" "EKS-WorkerNode-Face-Rekognition-policy" {
+  name = "EKS-WorkerNode-Face-Rekognition-policy"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+    {
+    "Sid": "recognisetheimage",
+    "Effect": "Allow",
+    "Action": [
+      "rekognition:SearchFacesByImage"
+    ],
+    "Resource": "arn:aws:rekognition:*:*:collection/*"
+  },
+  {
+    "Sid": "getimagedynamoDB",
+    "Effect": "Allow",
+    "Action": [
+      "dynamodb:GetItem"
+    ],
+    "Resource": "arn:aws:dynamodb:*:*:table/face-prints-table"
+  },
+  {
+    "Sid": "accesss3bucket",
+    "Effect": "Allow",
+    "Action": [
+      "s3:GetObject",
+      "s3:PutObject"
+    ],
+    "Resource": "arn:aws:s3:::aws-rekognition-source-bucket-logesh81098/*"
+  }
+    ]
+}  
+EOF
+}
+
+
+
+##################################################################################################################################################
 #                                                       Attaching IAM Role and Policy
 ################################################################################################################################################## 
 
@@ -248,4 +292,9 @@ resource "aws_iam_role_policy_attachment" "eks-worker-node-policy" {
 resource "aws_iam_role_policy_attachment" "eks-container-registry-read-only" {
   role = aws_iam_role.eks-worker-node-role.id
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "eks-node-group-with-application" {
+  role = aws_iam_role.eks-worker-node-role.id
+  policy_arn = aws_iam_policy.EKS-WorkerNode-Face-Rekognition-policy.arn
 }
