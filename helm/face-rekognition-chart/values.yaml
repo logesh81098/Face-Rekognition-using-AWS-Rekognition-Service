@@ -1,0 +1,4 @@
+# values.yaml
+image:
+  repository: logeshshanmugavel/face-rekognition
+  tag: v1
