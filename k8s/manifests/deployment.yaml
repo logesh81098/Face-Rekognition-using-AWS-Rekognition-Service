@@ -9,17 +9,17 @@ metadata:
   labels:
     app: face-rekognition
 spec: 
-  replica: 1
-  selector: 
+  replicas: 1 
+  selector:
     matchLabels:
       app: face-rekognition
   template:
-   metadata:
-    labels:
-      app: face-rekognition
-  spec:
-    containers: 
-      - name: face-rekognition
-        image: logeshshanmugavel/face-rekognition:v1
-        ports:
-          - containerPort: 81
+    metadata:
+      labels:
+        app: face-rekognition
+    spec: 
+      containers:
+        - name: face-rekognition
+          image: logeshshanmugavel/face-rekognition:v1
+          ports:
+            - containerPort: 81
